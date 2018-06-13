@@ -1,4 +1,6 @@
 const hapi = require('hapi');
+const mongoose = require('mongoose');
+
 
 const server = hapi.server({
   port: 4000,
@@ -15,5 +17,10 @@ const init = async () => {
   await server.start();
   console.log(`Server running at: ${server.info.uri}`);
 };
+
+mongoose.connect('mongodb://admin:qweqweqwe@localhost:27017/tutorial');
+mongoose.connection.once('open', () => {
+  console.log('Connected to database');
+});
 
 init();
