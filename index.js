@@ -3,6 +3,9 @@ const mongoose = require('mongoose');
 const Painting = require('./models/Painting');
 const { graphqlHapi, graphiqlHapi } = require('apollo-server-hapi');
 const schema = require('./graphql/schema');
+const Inert = require('inert');
+const Vision = require('vision');
+const HapiSwagger = require('hapi-swagger');
 
 
 const server = hapi.server({
@@ -20,6 +23,10 @@ const init = async () => {
   server.route({
     method: 'GET',
     path: '/api/v1/paintings',
+    config: {
+      description: 'Get all the paintings',
+      tags: ['api', 'v1', 'painting']
+    },
     handler: (request, reply) => Painting.find()
   });
 
@@ -63,6 +70,19 @@ const init = async () => {
       }
     }
   });
+
+  await server.register([
+    Inert,
+    Vision,
+    {
+      plugin: HapiSwagger,
+      options: {
+        info: {
+          title: 'Paintings API Documentation'
+        }
+      }
+    }
+  ]);
 
   await server.start();
   console.log(`Server running at: ${server.info.uri}`);
